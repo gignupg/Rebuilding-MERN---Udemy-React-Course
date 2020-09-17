@@ -58,7 +58,7 @@ const SidebarDrawer = () => {
             {newProject &&
                 <form onSubmit={projectHandler}>
                     <TextField value={newInput} onChange={e => setNewInput(e.target.value)} size="small" className="mx-auto mt-5 d-block col-10" label="Nombre Proyecto" variant="outlined"></TextField>
-                    <Button type="submit" onClick={() => setNewProject(true)} className="mx-auto mt-2 d-block col-10" size="large" variant="contained" color="primary">
+                    <Button onClick={() => setNewProject(true)} className="mx-auto mt-2 d-block col-10" size="large" variant="contained" color="primary">
                         Agregar Proyecto
                     </Button>
                 </form>

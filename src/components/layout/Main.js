@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import ProjectContext from '../../context/projects/ProjectContext';
-
+import ProjectPage from './ProjectPage';
 
 const useStyles = makeStyles((theme) => ({
     toolbar: theme.mixins.toolbar,
@@ -23,7 +23,7 @@ const Main = () => {
         <div className={classes.content}>
             <div className={classes.toolbar} />
             {activeProject ? 
-                <div>{activeProject}</div>
+                <ProjectPage />
             :
                 <Typography 
                     color="primary" 

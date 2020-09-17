@@ -7,7 +7,6 @@ import Sidebar from './Sidebar';
 import Main from './Main';
 import ProjectState from '../../context/projects/ProjectState';
 
-
 const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
