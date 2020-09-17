@@ -6,21 +6,12 @@ import { drawerWidth } from '../../values/defaults';
 import SidebarDrawer from './SidebarDrawer';
 
 const useStyles = makeStyles((theme) => ({
-    content: {
-        flexGrow: 1,
-        padding: theme.spacing(3),
-    },
-    root: {
-        display: 'flex',
-    },
     drawer: {
         [theme.breakpoints.up('sm')]: {
             width: drawerWidth,
             flexShrink: 0,
         },
     },
-    // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar,
     drawerPaper: {
         width: drawerWidth,
     },
@@ -33,8 +24,6 @@ const Sidebar = ({mobileOpen, setMobileOpen, window}) => {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-
-
 
     const container = window !== undefined ? () => window().document.body : undefined;
 
