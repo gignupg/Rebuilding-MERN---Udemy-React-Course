@@ -5,8 +5,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import MainHeader from './MainHeader';
 import Sidebar from './Sidebar';
 import Main from './Main';
+import ProjectState from '../../context/projects/ProjectState';
 
-const useStyles = makeStyles((theme) => ({
+
+const useStyles = makeStyles(() => ({
     root: {
         display: 'flex',
     }
@@ -19,15 +21,17 @@ function AppLayout() {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <MainHeader
-                mobileOpen={mobileOpen}
-                setMobileOpen={setMobileOpen}
-            />
-            <Sidebar
-                mobileOpen={mobileOpen}
-                setMobileOpen={setMobileOpen}
-            />
-            <Main />
+            <ProjectState>
+                <MainHeader
+                    mobileOpen={mobileOpen}
+                    setMobileOpen={setMobileOpen}
+                />
+                <Sidebar
+                    mobileOpen={mobileOpen}
+                    setMobileOpen={setMobileOpen}
+                />
+                <Main />
+            </ProjectState>
         </div>
     );
 }
