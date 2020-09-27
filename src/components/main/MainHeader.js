@@ -28,7 +28,7 @@ const MainHeader = ({ mobileOpen, setMobileOpen }) => {
     };
 
     return (
-        <AppBar position="fixed" color="primary" className={classes.appBar}>
+        <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
                 <IconButton
                     color="inherit"
@@ -40,10 +40,10 @@ const MainHeader = ({ mobileOpen, setMobileOpen }) => {
                     <MenuIcon />
                 </IconButton>
                 <Typography style={{ flexGrow: 1 }} variant="body1" noWrap>
-                    Hola <span style={{ fontWeight: "bold" }}>Juan</span>
+                    Hi <span style={{ fontWeight: "bold" }}>Juan</span>
                 </Typography>
                 <Typography variant="body1" noWrap>
-                    Cerrar Sesión
+                    Logout
             </Typography>
             </Toolbar>
         </AppBar>

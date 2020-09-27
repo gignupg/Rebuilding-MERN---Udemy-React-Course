@@ -1,8 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Divider from '@material-ui/core/Divider';
 import { Box, Button, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ProjectContext from '../../context/projects/ProjectContext';
+import { v4 as uuidv4 } from 'uuid';
 
 const useStyles = makeStyles((theme) => ({
     toolbar: theme.mixins.toolbar,
@@ -11,39 +12,49 @@ const useStyles = makeStyles((theme) => ({
 const SidebarDrawer = () => {
     const classes = useStyles();
     const [newProject, setNewProject] = useState(false);
-    const [projects, setProjects] = useState([]);
     const [newInput, setNewInput] = useState("");
     const [inputError, setInputError] = useState("");
-    
-    const { setActiveProject } = useContext(ProjectContext);
 
+    const { projects, setProjects, setActiveProject } = useContext(ProjectContext);
 
-    const projectHandler = (e) => {
+    useEffect(() => {
+        if (newProject) {
+            document.getElementById("project-input-field").focus();
+        }
+    }, [newProject]);
+
+    const projectSubmitHandler = (e) => {
         e.preventDefault();
 
         // empty project name
         if (!newInput) {
-            return setInputError("El nombre del proyecto es obligatorio!")
+            return setInputError("The project name cannot be left empty");
         }
 
         let double = false;
 
         // project already exists
         if (projects) {
-            double = projects.some(e => e === newInput);
+            double = projects.some(existingProject => existingProject.name === newInput);
         }
 
         if (double) {
-            setInputError("Ya existe un proyecto con ese nombre!");
+            setInputError("A project with this name already exists");
         } else {
             setProjects([
+                { name: newInput, id: uuidv4() },
                 ...projects,
-                newInput
             ]);
+            
             setInputError("");
             setNewInput("");
             setNewProject(false);
         }
+    };
+
+    const selectProjectHandler = (project) => {
+        // change active project
+        setActiveProject(project);
     };
 
     return (
@@ -53,22 +64,22 @@ const SidebarDrawer = () => {
             </Box>
             <Divider />
             <Button onClick={() => setNewProject(true)} className="mx-auto mt-4 d-block col-10" size="large" variant="contained" color="primary">
-                Nuevo Proyecto
+                New Project
             </Button>
             {newProject &&
-                <form onSubmit={projectHandler}>
-                    <TextField value={newInput} onChange={e => setNewInput(e.target.value)} size="small" className="mx-auto mt-5 d-block col-10" label="Nombre Proyecto" variant="outlined"></TextField>
-                    <Button onClick={() => setNewProject(true)} className="mx-auto mt-2 d-block col-10" size="large" variant="contained" color="primary">
-                        Agregar Proyecto
+                <form onSubmit={projectSubmitHandler}>
+                    <TextField id="project-input-field" value={newInput} onChange={e => setNewInput(e.target.value)} size="small" className="mx-auto mt-5 d-block col-10" label="Project name" variant="outlined"></TextField>
+                    <Button type="submit" className="mx-auto mt-2 d-block col-10" size="large" variant="contained" color="primary">
+                        Add this Project
                     </Button>
                 </form>
             }
-            {inputError && 
+            {inputError &&
                 <Typography className="mt-2 mx-4" color="error">{inputError}</Typography>
             }
-            <Typography className="mt-5 mb-3" align="center" variant="h6" color="primary">Tus Proyectos</Typography>
-            { projects && projects.map(elem => (
-                <Button onClick={() => setActiveProject(elem)} key={elem} color="primary" className="mb-2 mx-auto d-block text-left col-10">{elem}</Button>
+            <Typography className="mt-5 mb-3" align="center" variant="h6" color="primary">Your projects</Typography>
+            { projects && projects.map(project => (
+                <Button onClick={() => selectProjectHandler(project)} key={project.id} color="primary" className="mb-2 mx-auto d-block text-left col-10">{project.name}</Button>
             ))}
         </div>
     );

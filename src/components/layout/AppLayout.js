@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
-import MainHeader from './MainHeader';
-import Sidebar from './Sidebar';
-import Main from './Main';
+import MainHeader from '../main/MainHeader';
+import Sidebar from '../sidebar/Sidebar';
+import Main from '../main/Main';
 import ProjectState from '../../context/projects/ProjectState';
+import TaskState from '../../context/tasks/TaskState';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -21,15 +22,17 @@ function AppLayout() {
         <div className={classes.root}>
             <CssBaseline />
             <ProjectState>
-                <MainHeader
-                    mobileOpen={mobileOpen}
-                    setMobileOpen={setMobileOpen}
-                />
-                <Sidebar
-                    mobileOpen={mobileOpen}
-                    setMobileOpen={setMobileOpen}
-                />
-                <Main />
+                <TaskState>
+                    <MainHeader
+                        mobileOpen={mobileOpen}
+                        setMobileOpen={setMobileOpen}
+                    />
+                    <Sidebar
+                        mobileOpen={mobileOpen}
+                        setMobileOpen={setMobileOpen}
+                    />
+                    <Main />
+                </TaskState>
             </ProjectState>
         </div>
     );

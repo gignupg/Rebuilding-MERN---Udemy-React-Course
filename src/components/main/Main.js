@@ -22,15 +22,18 @@ const Main = () => {
     return (
         <div className={classes.content}>
             <div className={classes.toolbar} />
-            {activeProject ? 
-                <ProjectPage />
+            {activeProject.id ?
+                // If a project is selected 
+                <ProjectPage />        
             :
-                <Typography 
+                // If no project is selected
+                <Typography  
+                    className="mt-5"    
+                    align="center" 
                     color="primary" 
                     variant="h5" 
-                    style={{ fontWeight: "bold", textAlign: "center"}}
                 >
-                    Selecciona un proyecto
+                    <strong>Select a project from the left sidebar!</strong>
                 </Typography>
             }
         </div>
