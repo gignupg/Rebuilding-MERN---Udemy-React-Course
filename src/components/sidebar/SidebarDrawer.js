@@ -4,6 +4,10 @@ import { Box, Button, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ProjectContext from '../../context/projects/ProjectContext';
 import { v4 as uuidv4 } from 'uuid';
+import {
+    CSSTransition,
+    TransitionGroup,
+} from 'react-transition-group';
 
 const useStyles = makeStyles((theme) => ({
     toolbar: theme.mixins.toolbar,
@@ -45,7 +49,7 @@ const SidebarDrawer = () => {
                 { name: newInput, id: uuidv4() },
                 ...projects,
             ]);
-            
+
             setInputError("");
             setNewInput("");
             setNewProject(false);
@@ -78,9 +82,16 @@ const SidebarDrawer = () => {
                 <Typography className="mt-2 mx-4" color="error">{inputError}</Typography>
             }
             <Typography className="mt-5 mb-3" align="center" variant="h6" color="primary">Your projects</Typography>
-            { projects && projects.map(project => (
-                <Button onClick={() => selectProjectHandler(project)} key={project.id} color="primary" className="mb-2 mx-auto d-block text-left col-10">{project.name}</Button>
-            ))}
+            <TransitionGroup>
+                {projects && projects.map(project => (
+                    <CSSTransition
+                        key={project.id}
+                        timeout={200}
+                    >
+                        <Button onClick={() => selectProjectHandler(project)}  color="primary" className="mb-2 mx-auto d-block text-left col-10">{project.name}</Button>
+                    </CSSTransition>
+                ))}
+            </TransitionGroup>
         </div>
     );
 };
