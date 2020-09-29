@@ -1,43 +1,33 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Button, Paper, Typography } from '@material-ui/core';
 import TaskContext from '../../context/tasks/TaskContext';
 import ProjectContext from '../../context/projects/ProjectContext';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-const Tasks = ({ setTaskInput, setOldTaskName, setTaskButtonName }) => {
+const Tasks = () => {
     const { activeProject } = useContext(ProjectContext);
-    const { tasks, setTasks } = useContext(TaskContext);
-
-    const [activeTasks, setActiveTasks] = useState([]);
+    const { tasks, activeTasks, taskDispatcher } = useContext(TaskContext);
 
     useEffect(() => {
-        setActiveTasks(tasks.filter(task => task.id === activeProject.id ? task : null));
-    }, [tasks, activeProject]);
+        taskDispatcher({ type: "UPDATE_ACTIVE_TASKS", payload: activeProject });
+    }, [tasks, activeProject, taskDispatcher]);
 
-    const completionHandler = (activeTask) => {
-        // Changing the status of a task
+    const statusHandler = (activeTask) => {
         const changedStatus = activeTask.status === "incomplete" ? "complete" : "incomplete";
-        const changedTask = { name: activeTask.name, status: changedStatus, id: activeTask.id };
-
-        setTasks(tasks.map(task => task.name !== activeTask.name ? task : changedTask));
+        const changedTask = { ...activeTask, status: changedStatus };
+        taskDispatcher({ type: "UPDATE_TASK_STATUS", payload: changedTask });
     };
 
     const editTaskHandler = (task) => {
         window.scrollTo(0, 0);
         document.getElementById("task-input-field").focus();
-        setOldTaskName(task.name);
-        setTaskInput(task.name);
-        setTaskButtonName("Change task name");
-
-    };
-
-    const deleteTaskHandler = deletedTask => {
-        setTasks(tasks.filter(task => task.name !== deletedTask.name ? task : null));
+        taskDispatcher({ type: "EDIT_TASK_NAME", payload: task });
     };
 
     return (
         <>
-            {activeTasks.length === 0 ?
+            {activeTasks.length === 0
+                ?
                 (
                     <Paper
                         elevation={3}
@@ -55,11 +45,14 @@ const Tasks = ({ setTaskInput, setOldTaskName, setTaskButtonName }) => {
                     </Paper>
                 )
                 :
-                (<TransitionGroup>
+                <TransitionGroup>
                     {activeTasks.map(task => (
                         <CSSTransition
-                            key={task.name}
-                            timeout={200}
+                            key={task.id}
+                            timeout={{
+                                enter: 100,
+                                exit: 500,
+                            }}
                         >
                             <Paper
                                 elevation={3}
@@ -74,7 +67,7 @@ const Tasks = ({ setTaskInput, setOldTaskName, setTaskButtonName }) => {
                                         </div>
                                         <div className="col m-auto px-0">
                                             <Typography
-                                                onClick={() => completionHandler(task)}
+                                                onClick={() => statusHandler(task)}
                                                 align="center"
                                                 className={`m-1 ${task.status}`}
                                                 variant="body2"
@@ -93,7 +86,7 @@ const Tasks = ({ setTaskInput, setOldTaskName, setTaskButtonName }) => {
                                             edit
                                         </Button>
                                         <Button
-                                            onClick={() => deleteTaskHandler(task)}
+                                            onClick={() => taskDispatcher({ type: "DELETE_TASK", payload: task })}
                                             className="col m-auto"
                                             size="small"
                                             variant="contained"
@@ -105,7 +98,7 @@ const Tasks = ({ setTaskInput, setOldTaskName, setTaskButtonName }) => {
                             </Paper>
                         </CSSTransition>
                     ))}
-                </TransitionGroup>)
+                </TransitionGroup>
             }
         </>
     );

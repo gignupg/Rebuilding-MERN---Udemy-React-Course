@@ -1,58 +1,32 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import Tasks from './Tasks';
 import ProjectContext from '../../context/projects/ProjectContext';
 import TaskContext from '../../context/tasks/TaskContext';
 import { Box, Button, TextField, Typography } from '@material-ui/core';
+import { v4 as uuidv4 } from 'uuid';
 
 const ProjectPage = () => {
 
-    const { projects, activeProject, setProjects, setActiveProject } = useContext(ProjectContext);
-    const { tasks, setTasks } = useContext(TaskContext);
-
-    const [inputError, setInputError] = useState("");
-    const [taskInput, setTaskInput] = useState("");
-    const [oldTaskName, setOldTaskName] = useState("");
-    const [taskButtonName, setTaskButtonName] = useState("Add a task");
+    const { activeProject, projectDispatcher } = useContext(ProjectContext);
+    const { tasks, taskInput, activeTask, submitButtonName, inputError, taskDispatcher} = useContext(TaskContext);
 
     const taskSubmitHandler = e => {
         e.preventDefault();
 
         if (!taskInput) {
-            return setInputError("The task name cannot be left empty!");
+            taskDispatcher({type: "UPDATE_INPUT_ERROR", payload: "The task name cannot be left empty!"});
 
-        } else if (tasks.some(task => (task.name === taskInput && task.id === activeProject.id && taskButtonName === "Add a task"))) {
-            return setInputError("This task already exists. Please choose a different name!");
+        } else if (tasks.some(task => (task.name === taskInput && task.projectId === activeProject.id && activeTask.name !== taskInput))) {
+            taskDispatcher({type: "UPDATE_INPUT_ERROR", payload: "This task already exists. Please choose a different name!"});
 
-        } else if (taskButtonName === "Add a task") {
-            setTasks([
-                { name: taskInput, status: "incomplete", id: activeProject.id },
-                ...tasks
-            ]);
+        } else if (submitButtonName === "Add a task") {
+            const newTask = { name: taskInput, status: "incomplete", id: uuidv4(), projectId: activeProject.id }
+            taskDispatcher({type: "CREATE_NEW_TASK", payload: newTask})
 
-        } else if (taskButtonName === "Change task name") {
-            setTasks(tasks.map(task => {
-                if (task.name === oldTaskName && task.id === activeProject.id) {
-                    return { name: taskInput, status: task.status, id: task.id };
-                } else {
-                    return task;
-                }
-            }));
-
-            setTaskButtonName("Add a task");
+        } else if (submitButtonName === "Change task name") {
+            const updatedTask = { ...activeTask, name: taskInput}
+            taskDispatcher({type: "UPDATE_TASK_NAME", payload: updatedTask})
         }
-
-        // Resetting everything
-        setTaskInput("");
-        setOldTaskName("");
-        setInputError("");
-    };
-
-    const deleteProjectHandler = () => {
-        // Filtering out the current project
-        setProjects(projects.filter(project => project.id !== activeProject.id ? project : null));
-
-        // Since we're deleting the project in can not longer be active. A project that doesn't exist cannot be active...
-        setActiveProject({});
     };
 
     return (
@@ -65,7 +39,7 @@ const ProjectPage = () => {
                         label="Task name..."
                         variant="filled"
                         value={taskInput}
-                        onChange={e => setTaskInput(e.target.value)}
+                        onChange={e => taskDispatcher({type: "UPDATE_TASK_INPUT", payload: e.target.value})}
                         style={{ backgroundColor: "white", borderRadius: "4px", marginBottom: "8px" }}
                         fullWidth
                     ></TextField>
@@ -75,12 +49,18 @@ const ProjectPage = () => {
                         variant="contained"
                         color="primary"
                         fullWidth
-                    >{taskButtonName}
+                    >{submitButtonName}
                     </Button>
                 </form>
             </Box>
             {inputError &&
-                <Typography className="mt-3" align="center" color="error">{inputError}</Typography>
+                <Typography 
+                    className="mt-3" 
+                    align="center" 
+                    color="error"
+                >
+                    {inputError}
+                </Typography>
             }
             <Typography
                 variant="h5"
@@ -92,11 +72,14 @@ const ProjectPage = () => {
                 Project: {activeProject.name}
             </Typography>
             <Tasks
-                setTaskInput={setTaskInput}
-                setOldTaskName={setOldTaskName}
-                setTaskButtonName={setTaskButtonName}
             />
-            <Button onClick={deleteProjectHandler} style={{ marginTop: "32px" }} variant='outlined'>Delete Project</Button>
+            <Button 
+                onClick={() => projectDispatcher({type: "DELETE_PROJECT", payload: activeProject})} 
+                style={{ marginTop: "32px" }} 
+                variant='outlined'
+            >
+                Delete Project
+            </Button>
         </>
     );
 };

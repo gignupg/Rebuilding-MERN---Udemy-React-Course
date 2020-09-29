@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import projectContext from './ProjectContext';
+import ProjectReducer from './ProjectReducer';
 
 const ProjectState = props => {
-    const [projects, setProjects] = useState([]);
-    const [activeProject, setActiveProject] = useState({});
+    const initialState = {
+        projects: [],
+        activeProject: {},
+        projectInput: "",
+        showInputField: false,
+        inputError: "",
+    }
+
+    const [state, projectDispatcher] = useReducer(ProjectReducer, initialState)
 
     return (
         <projectContext.Provider
             value={{
-                projects,
-                activeProject,
-                setProjects,
-                setActiveProject,
+                projects: state.projects,
+                activeProject: state.activeProject,
+                projectInput: state.projectInput,
+                showInputField: state.showInputField,
+                inputError: state.inputError,
+                projectDispatcher
             }}
         > 
             {props.children}
