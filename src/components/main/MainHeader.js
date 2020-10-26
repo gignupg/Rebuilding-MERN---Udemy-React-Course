@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core';
 import { drawerWidth } from '../../values/defaults';
+import { Button } from '@material-ui/core';
+import authContext from '../../context/auth/authContext';
+import tokenInHeader from '../../config/tokenInHeader';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -21,11 +24,23 @@ const useStyles = makeStyles((theme) => ({
 
 const MainHeader = ({ mobileOpen, setMobileOpen }) => {
 
+    const { setToken, setAuth, tokenValid } = useContext(authContext)
+
     const classes = useStyles();
+
+    useEffect( () => {
+        tokenValid()
+    }, [tokenValid])
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+
+    const logoutHandler = () => {
+        setToken("")
+        setAuth(false)
+        tokenInHeader("")
+    }
 
     return (
         <AppBar position="fixed" className={classes.appBar}>
@@ -42,9 +57,9 @@ const MainHeader = ({ mobileOpen, setMobileOpen }) => {
                 <Typography style={{ flexGrow: 1 }} variant="body1" noWrap>
                     Hi <span style={{ fontWeight: "bold" }}>Juan</span>
                 </Typography>
-                <Typography variant="body1" noWrap>
+                <Button onClick={logoutHandler} style={{ color: "white"}}>
                     Logout
-            </Typography>
+                </Button>
             </Toolbar>
         </AppBar>
     );
