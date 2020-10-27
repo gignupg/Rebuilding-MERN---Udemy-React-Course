@@ -8,7 +8,7 @@ import authContext from '../../context/auth/authContext';
 
 export default function Login() {
 
-    const { setToken, setAuth } = useContext(authContext);
+    const { setToken, setUser } = useContext(authContext);
 
     const theme = useTheme();
 
@@ -35,10 +35,10 @@ export default function Login() {
 
         try {
             const response = await axiosClient.post('/api/auth/login', { email, password });
-            const token = response.data.token;
+            const { token, user } = response.data;
 
             setToken(token);
-            setAuth(true);
+            setUser(user);
 
         } catch (err) {
             setError(err.response.data.msg);

@@ -5,21 +5,16 @@ import tokenInHeader from '../../config/tokenInHeader';
 
 const ProjectState = props => {
     const [token, setToken] = useState(localStorage.getItem("token"));
-    const [auth, setAuth] = useState(JSON.parse(localStorage.getItem("auth")));
-    const [user, setUser] = useState(); // Reminder
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
-    const updateUser = async () => {
+    const getAuthenticatedUser = async () => {
         try {
-            const info = await axiosClient.get('/api/auth/user-info');
-
-            console.log(info)
-
-            setAuth(true);
+            await axiosClient.get('/api/auth/user-info');
 
         } catch (err) {
-            console.log("caught an error: ", err);
-
-            setAuth(false);
+            console.log(err);
+            setToken("");
+            setUser(null);
         }
     };
 
@@ -29,17 +24,17 @@ const ProjectState = props => {
     }, [token]);
 
     useEffect(() => {
-        localStorage.setItem('auth', JSON.stringify(auth));
-    }, [auth]);
+        localStorage.setItem('user', JSON.stringify(user));
+    }, [user]);
 
     return (
         <authContext.Provider
             value={{
                 token,
-                auth,
+                user,
                 setToken,
-                setAuth,
-                tokenValid: updateUser
+                setUser,
+                getAuthenticatedUser
             }}
         >
             {props.children}

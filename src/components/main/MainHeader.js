@@ -24,13 +24,9 @@ const useStyles = makeStyles((theme) => ({
 
 const MainHeader = ({ mobileOpen, setMobileOpen }) => {
 
-    const { setToken, setAuth, tokenValid } = useContext(authContext)
+    const { user, setToken, setUser } = useContext(authContext)
 
     const classes = useStyles();
-
-    useEffect( () => {
-        tokenValid()
-    }, [tokenValid])
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -38,7 +34,7 @@ const MainHeader = ({ mobileOpen, setMobileOpen }) => {
 
     const logoutHandler = () => {
         setToken("")
-        setAuth(false)
+        setUser(null)
         tokenInHeader("")
     }
 
@@ -55,7 +51,7 @@ const MainHeader = ({ mobileOpen, setMobileOpen }) => {
                     <MenuIcon />
                 </IconButton>
                 <Typography style={{ flexGrow: 1 }} variant="body1" noWrap>
-                    Hi <span style={{ fontWeight: "bold" }}>Juan</span>
+                    Hi <span style={{ fontWeight: "bold" }}>{user.name}</span>
                 </Typography>
                 <Button onClick={logoutHandler} style={{ color: "white"}}>
                     Logout

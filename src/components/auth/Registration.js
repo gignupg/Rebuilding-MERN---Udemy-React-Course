@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import { Box, Typography, TextField, Button, Grid } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import axiosClient from '../../config/axios';
+import authContext from '../../context/auth/authContext';
 
 const Registration = () => {
 
     const theme = useTheme();
+
+    const { setToken, setUser } = useContext(authContext);
 
     const [inputValues, setInputValues] = useState({
         name: "",
@@ -38,13 +41,17 @@ const Registration = () => {
             setError("Passwords don't match");
         } else {
             setError(null);
-            console.log(inputValues);
 
             // Add User to database
             try {
-                await axiosClient.post('/api/auth/registration', {name, email, password})
-            } catch (error){
-                setError(error.response.data.msg)
+                const response = await axiosClient.post('/api/auth/registration', { name, email, password });
+                const { token, user } = response.data;
+
+                setToken(token);
+                setUser(user);
+
+            } catch (error) {
+                setError(error.response.data.msg);
             }
 
             // Log them in automatically after successful registration!
@@ -58,7 +65,7 @@ const Registration = () => {
                 <form onSubmit={submitHandler} style={{ margin: theme.spacing() * 0 }}>
                     <Grid container direction="column" alignItems="center" spacing={4}>
                         <Grid item className="my-3">
-                            <Typography variant="h4" color="primary">Create new Account</Typography>
+                            <Typography variant="h4" color="primary">Create an Account</Typography>
                         </Grid>
                         {error && <Typography
                             color="error"

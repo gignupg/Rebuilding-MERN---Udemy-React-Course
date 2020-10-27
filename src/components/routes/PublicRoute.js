@@ -4,10 +4,10 @@ import authContext from '../../context/auth/authContext';
 
 const PublicRoute = ({ component: Component }) => {
 
-    const { auth } = useContext(authContext);
+    const { user } = useContext(authContext);
 
     return (
-        <Route render={() => auth ? (
+        <Route render={() => user ? (
             <Redirect to="/" />
         ) : (
                 <Component />
