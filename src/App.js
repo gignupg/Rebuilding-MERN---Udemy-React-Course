@@ -12,6 +12,9 @@ import {
   Switch,
 } from "react-router-dom";
 import AuthState from './context/auth/authState';
+import ProjectState from './context/projects/ProjectState';
+import TaskState from './context/tasks/TaskState';
+import tokenInHeader from './config/tokenInHeader';
 
 const theme = createMuiTheme({
   palette: {
@@ -21,17 +24,26 @@ const theme = createMuiTheme({
   }
 });
 
+const token = localStorage.getItem('token');
+if (token) {
+  tokenInHeader(token);
+}
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <AuthState>
-        <Router>
-          <Switch>
-            <PublicRoute path="/login" component={Login} />
-            <PublicRoute path="/registration" component={Registration} />
-            <PrivateRoute path="/" component={AppLayout} />
-          </Switch>
-        </Router>
+        <ProjectState>
+          <TaskState>
+            <Router>
+              <Switch>
+                <PublicRoute path="/login" component={Login} />
+                <PublicRoute path="/registration" component={Registration} />
+                <PrivateRoute path="/" component={AppLayout} />
+              </Switch>
+            </Router>
+          </TaskState>
+        </ProjectState>
       </AuthState>
     </ThemeProvider>
   );

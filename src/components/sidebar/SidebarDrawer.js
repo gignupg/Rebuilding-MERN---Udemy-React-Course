@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Divider from '@material-ui/core/Divider';
 import { Box, Button, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,7 +7,6 @@ import {
     CSSTransition,
     TransitionGroup,
 } from 'react-transition-group';
-import axiosClient from '../../config/axios';
 
 const useStyles = makeStyles((theme) => ({
     toolbar: theme.mixins.toolbar,
@@ -15,7 +14,24 @@ const useStyles = makeStyles((theme) => ({
 
 const SidebarDrawer = () => {
     const classes = useStyles();
-    const { projects, projectInput, inputError, showInputField, projectDispatcher } = useContext(ProjectContext);
+
+    const [inputValue, setInputValue] = useState("")
+
+    const { 
+        projects, 
+        inputError, 
+        showInputField, 
+        inputErrorUpdater, 
+        newProjectCreator, 
+        inputFieldActivator,
+        projectSynchronizer,
+        activeProjectUpdater
+    } = useContext(ProjectContext);
+
+    useEffect(() => {
+        projectSynchronizer();
+        // eslint-disable-next-line
+    }, []);
 
     // Puts the cursor into the input field, so you can start typing
     useEffect(() => {
@@ -27,15 +43,14 @@ const SidebarDrawer = () => {
     const projectSubmitHandler = async e => {
         e.preventDefault();
 
-        if (!projectInput) {
-            projectDispatcher({ type: "UPDATE_INPUT_ERROR", payload: "The project name cannot be left empty" });
+        if (!inputValue) {
+            inputErrorUpdater("The project name cannot be left empty");
 
-        } else if (projects.some(project => project.name === projectInput)) {
-            projectDispatcher({ type: "UPDATE_INPUT_ERROR", payload: "A project with this name already exists" });
+        } else if (projects.some(project => project.name.toLowerCase() === inputValue.toLowerCase())) {
+            inputErrorUpdater("A project with this name already exists");
 
         } else {
-            const response = await axiosClient.post('/api/projects', { name: projectInput });
-            projectDispatcher({ type: "CREATE_NEW_PROJECT", payload: response.data });
+            newProjectCreator(inputValue)
         }
     };
 
@@ -52,14 +67,14 @@ const SidebarDrawer = () => {
                     <span
                         style={{ fontWeight: "bold" }}
                     >
-                        MERN
+                        Task&nbsp;
                     </span>
-                    Tasks
+                    Manager
                 </Typography>
             </Box>
             <Divider />
             <Button
-                onClick={() => projectDispatcher({ type: "TOGGLE_INPUT_FIELD", payload: true })}
+                onClick={() => inputFieldActivator(true)}
                 className="mx-auto mt-4 d-block col-10"
                 size="large"
                 variant="contained"
@@ -71,8 +86,7 @@ const SidebarDrawer = () => {
                 <form onSubmit={projectSubmitHandler}>
                     <TextField
                         id="project-input-field"
-                        value={projectInput}
-                        onChange={e => projectDispatcher({ type: "UPDATE_PROJECT_INPUT", payload: e.target.value })}
+                        onChange={e => setInputValue(e.target.value)}
                         size="small"
                         className="mx-auto mt-5 d-block col-10"
                         label="Project name"
@@ -113,7 +127,7 @@ const SidebarDrawer = () => {
                         timeout={200}
                     >
                         <Button
-                            onClick={() => projectDispatcher({ type: "UPDATE_ACTIVE_PROJECT", payload: project })}
+                            onClick={() => activeProjectUpdater(project)}
                             color="primary"
                             className="mb-2 mx-auto d-block text-left col-10"
                         >

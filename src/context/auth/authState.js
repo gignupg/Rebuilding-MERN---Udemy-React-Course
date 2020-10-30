@@ -20,7 +20,7 @@ const ProjectState = props => {
 
     useEffect(() => {
         localStorage.setItem('token', token);
-        tokenInHeader(token)
+        tokenInHeader(token);
     }, [token]);
 
     useEffect(() => {

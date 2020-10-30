@@ -2,31 +2,26 @@ import React, { useEffect, useContext } from 'react';
 import { Button, Paper, Typography } from '@material-ui/core';
 import TaskContext from '../../context/tasks/TaskContext';
 import ProjectContext from '../../context/projects/ProjectContext';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const Tasks = () => {
     const { activeProject } = useContext(ProjectContext);
-    const { tasks, activeTasks, taskDispatcher } = useContext(TaskContext);
+
+    const {
+        tasks,
+        editModeActivator,
+        statusSwitcher,
+        taskDeleter,
+        taskSynchronizer
+    } = useContext(TaskContext);
 
     useEffect(() => {
-        taskDispatcher({ type: "UPDATE_ACTIVE_TASKS", payload: activeProject });
-    }, [tasks, activeProject, taskDispatcher]);
-
-    const statusHandler = (activeTask) => {
-        const changedStatus = activeTask.status === "incomplete" ? "complete" : "incomplete";
-        const changedTask = { ...activeTask, status: changedStatus };
-        taskDispatcher({ type: "UPDATE_TASK_STATUS", payload: changedTask });
-    };
-
-    const editTaskHandler = (task) => {
-        window.scrollTo(0, 0);
-        document.getElementById("task-input-field").focus();
-        taskDispatcher({ type: "EDIT_TASK_NAME", payload: task });
-    };
+        taskSynchronizer(activeProject._id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeProject]);
 
     return (
         <>
-            {activeTasks.length === 0
+            {tasks.length === 0
                 ?
                 (
                     <Paper
@@ -45,60 +40,53 @@ const Tasks = () => {
                     </Paper>
                 )
                 :
-                <TransitionGroup>
-                    {activeTasks.map(task => (
-                        <CSSTransition
-                            key={task.id}
-                            timeout={{
-                                enter: 100,
-                                exit: 500,
-                            }}
+                <>
+                    {tasks.map(task => (
+                        <Paper
+                            key={task._id}
+                            elevation={3}
+                            className="mx-auto mb-3 p-2 col-10 col-sm-8 col-lg-6"
                         >
-                            <Paper
-                                elevation={3}
-                                className="mx-auto mb-3 p-2 col-10 col-sm-8 col-lg-6"
-                            >
-                                <div className="container">
-                                    <div className="row">
-                                        <div className="col-12 col-lg-5 my-auto px-0">
-                                            <Typography
-                                                className="m-1 align-task-title"
-                                            ><strong>{task.name}</strong></Typography>
-                                        </div>
-                                        <div className="col m-auto px-0">
-                                            <Typography
-                                                onClick={() => statusHandler(task)}
-                                                align="center"
-                                                className={`m-1 ${task.status}`}
-                                                variant="body2"
-                                                style={{ borderRadius: "4px", cursor: "pointer" }}
-                                            >
-                                                {task.status}
-                                            </Typography>
-                                        </div>
-                                        <Button
-                                            onClick={() => editTaskHandler(task)}
-                                            className="col m-auto"
-                                            variant="contained"
-                                            color="primary"
-                                            size="small"
-                                        >
-                                            edit
-                                        </Button>
-                                        <Button
-                                            onClick={() => taskDispatcher({ type: "DELETE_TASK", payload: task })}
-                                            className="col m-auto"
-                                            size="small"
-                                            variant="contained"
-                                        >
-                                            delete
-                                        </Button>
+                            <div className="container">
+                                <div className="row">
+                                    <div className="col-12 col-lg-5 my-auto px-0">
+                                        <Typography
+                                            className="m-1 align-task-title"
+                                        ><strong>{task.name}</strong></Typography>
                                     </div>
+                                    <div className="col m-auto px-0">
+                                        <Typography
+                                            onClick={() => statusSwitcher(task._id, task.status)}
+                                            align="center"
+                                            className={`m-1 ${task.status}`}
+                                            variant="body2"
+                                            style={{ borderRadius: "4px", cursor: "pointer" }}
+                                        >
+                                            {task.status}
+                                        </Typography>
+                                    </div>
+                                    <Button
+                                        onClick={() => editModeActivator(task)}
+                                        className="col m-auto"
+                                        variant="contained"
+                                        color="primary"
+                                        size="small"
+                                    >
+                                        edit
+                                    </Button>
+                                    <Button
+                                        onClick={() => taskDeleter(task._id)}
+                                        className="col m-auto"
+                                        size="small"
+                                        variant="contained"
+                                    >
+                                        delete
+                                    </Button>
                                 </div>
-                            </Paper>
-                        </CSSTransition>
+                            </div>
+                        </Paper>
                     ))}
-                </TransitionGroup>
+                </>
             }
         </>
     );

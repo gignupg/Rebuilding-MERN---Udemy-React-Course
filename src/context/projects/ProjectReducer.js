@@ -8,6 +8,11 @@ export default (state, action) => {
                 projectInput: "",
                 inputError: "",
             };
+        case "SYNCHRONIZE_PROJECTS":
+            return {
+                ...state,
+                projects: action.payload
+            }
         case "TOGGLE_INPUT_FIELD":
             return {
                 ...state,
@@ -18,11 +23,6 @@ export default (state, action) => {
                 ...state,
                 activeProject: action.payload
             }
-        case "UPDATE_PROJECT_INPUT":
-            return {
-                ...state,
-                projectInput: action.payload
-            }
         case "UPDATE_INPUT_ERROR":
             return {
                 ...state,
@@ -31,7 +31,7 @@ export default (state, action) => {
         case "DELETE_PROJECT":
             return {
                 ...state,
-                projects: state.projects.filter(project => project.id !== action.payload.id ? project : null),
+                projects: state.projects.filter(project => project._id !== action.payload ? project : null),
                 activeProject: {}
             };
         default:

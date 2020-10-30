@@ -22,11 +22,11 @@ const Main = () => {
     return (
         <div className={classes.content}>
             <div className={classes.toolbar} />
-            {activeProject.id ?
-                // If a project is selected 
+            {activeProject._id ?
+                // When a project is selected 
                 <ProjectPage />        
             :
-                // If no project is selected
+                // When no project is selected
                 <Typography  
                     className="mt-5"    
                     align="center" 

@@ -1,11 +1,10 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core';
 import { drawerWidth } from '../../values/defaults';
 import { Button } from '@material-ui/core';
 import authContext from '../../context/auth/authContext';
-import tokenInHeader from '../../config/tokenInHeader';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -35,7 +34,6 @@ const MainHeader = ({ mobileOpen, setMobileOpen }) => {
     const logoutHandler = () => {
         setToken("")
         setUser(null)
-        tokenInHeader("")
     }
 
     return (

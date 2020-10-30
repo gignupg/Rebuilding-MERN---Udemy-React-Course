@@ -5,8 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import MainHeader from '../main/MainHeader';
 import Sidebar from '../sidebar/Sidebar';
 import Main from '../main/Main';
-import ProjectState from '../../context/projects/ProjectState';
-import TaskState from '../../context/tasks/TaskState';
+
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -21,19 +20,15 @@ function AppLayout() {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <ProjectState>
-                <TaskState>
-                    <MainHeader
-                        mobileOpen={mobileOpen}
-                        setMobileOpen={setMobileOpen}
-                    />
-                    <Sidebar
-                        mobileOpen={mobileOpen}
-                        setMobileOpen={setMobileOpen}
-                    />
-                    <Main />
-                </TaskState>
-            </ProjectState>
+            <MainHeader
+                mobileOpen={mobileOpen}
+                setMobileOpen={setMobileOpen}
+            />
+            <Sidebar
+                mobileOpen={mobileOpen}
+                setMobileOpen={setMobileOpen}
+            />
+            <Main />
         </div>
     );
 }

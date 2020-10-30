@@ -1,5 +1,5 @@
 export default (state, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case "CREATE_NEW_TASK":
             return {
                 ...state,
@@ -7,53 +7,48 @@ export default (state, action) => {
                 taskInput: "",
                 activeTask: {},
                 inputError: ""
-            }
-        case "EDIT_TASK_NAME":
+            };
+        case "ACTIVATE_EDIT_MODE":
             return {
                 ...state,
                 activeTask: action.payload,
                 taskInput: action.payload.name,
                 submitButtonName: "Change task name"
-            }
+            };
         case "UPDATE_INPUT_ERROR":
             return {
                 ...state,
                 inputError: action.payload
-            }
-        case "UPDATE_ACTIVE_TASKS":
+            };
+        case "UPDATE_TASKS":
             return {
                 ...state,
-                activeTasks: state.tasks.filter(task => task.projectId === action.payload.id ? task : null)
-            }
-        case "UPDATE_TASK_INPUT":
+                tasks: action.payload
+            };
+        case "UPDATE_TASK_NAME":
             return {
                 ...state,
-                taskInput: action.payload
-            }
-        case "UPDATE_TASK_NAME":  
-            return {
-                ...state,
-                tasks: state.tasks.map(task => task.id === action.payload.id ? action.payload : task),
+                tasks: state.tasks.map(task => task._id === action.payload._id ? action.payload : task),
                 submitButtonName: "Add a task",
                 taskInput: "",
                 activeTask: {},
                 inputError: ""
-            }
+            };
         case "UPDATE_TASK_STATUS":
             return {
                 ...state,
-                tasks: state.tasks.map(task => task.id === action.payload.id ? action.payload : task)
-            }
-        case "UPDATE_SUBMIT_BUTTON_NAME":
+                tasks: state.tasks.map(task => task._id === action.payload._id ? action.payload : task)
+            };
+        case "UPDATE_TASK_INPUT":
             return {
                 ...state,
-                submitButtonName: action.payload
-            }
+                taskInput: action.payload
+            };
         case "DELETE_TASK":
             return {
                 ...state,
-                tasks: state.tasks.filter(task => task.id === action.payload.id ? null : task)
-            }
+                tasks: state.tasks.filter(task => task._id === action.payload ? null : task)
+            };
         default:
             return state;
     }

@@ -40,23 +40,21 @@ const Registration = () => {
         } else if (password !== password2) {
             setError("Passwords don't match");
         } else {
-            setError(null);
+            setError("");
 
             // Add User to database
             try {
                 const response = await axiosClient.post('/api/auth/registration', { name, email, password });
-                const { token, user } = response.data;
+                const { token, newUser } = response.data;
 
                 setToken(token);
-                setUser(user);
+                setUser(newUser);
 
             } catch (error) {
+                console.log("Error caught: ", error.response)
                 setError(error.response.data.msg);
             }
-
-            // Log them in automatically after successful registration!
         }
-
     };
 
     return (
