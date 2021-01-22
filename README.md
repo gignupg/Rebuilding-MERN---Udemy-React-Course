@@ -4,5 +4,3 @@ Original repo: https://github.com/juanpablogdl/MERNTASKS-cliente/tree/f460f0e72a
 
 Back-end Repo: https://github.com/gignupg/Rebuilding-MERN-Server---Udemy-React-Course/blob/master/README.md
 
-The back-end part is hosted on Heroku, the front-end part on Netlify
-
